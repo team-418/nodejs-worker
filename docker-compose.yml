@@ -1,0 +1,36 @@
+version: '2'
+services:
+  node:
+    image: josiah14/heroku-node418
+    command: /bin/zsh
+    tty: true
+    stdin_open: true
+    ports:
+      - '8000:8000'
+    volumes:
+      - .:/app/user/app
+    container_name: node418
+  pg:
+    image: postgres:9.6.1
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    container_name: pg418
+    environment:
+      POSTGRES_PASSWORD: password
+  web:
+    image: josiah14/heroku-ruby418
+    command: /bin/zsh
+    tty: true
+    stdin_open: true
+    links:
+      - pg 
+    volumes:
+      - .:/app/user/website
+    ports:
+      - "3000:3000"
+    depends_on:
+      - pg
+    container_name: ruby418
+    
